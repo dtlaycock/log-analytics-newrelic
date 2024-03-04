@@ -79,12 +79,12 @@ Download the relevant fluent configuration file for the product from the GitHub 
 
 The fluent configuration file uses environment variables extensively (e.g. to know where to collect log files to stream to your observability dashboards). Ensure that you fill in the .env file with correct values. Download the [jfrog.env file](https://raw.githubusercontent.com/jfrog/log-analytics-newrelic/master/jfrog.env)
 
-* **JF_PRODUCT_DATA_INTERNAL**: The environment variable JF_PRODUCT_DATA_INTERNAL must be set to the location where the log folder exists. For each JFrog service you will find its active log files in the `$JFROG_HOME/<product>/var/log` directory so the environmnt variable should be set to `$JFROG_HOME/<product>/var`
-* **NEWRELIC_LICENSE_KEY**: License Key from [NewRelic](https://one.newrelic.com/launcher/api-keys-ui.api-keys-launcher)
-* **JPD_URL**: Artifactory JPD URL of the format `http://<ip_address>`
-* **JPD_ADMIN_USERNAME**: Artifactory username for authentication
-* **JPD_ADMIN_TOKEN**: Artifactory [Access Token](https://jfrog.com/help/r/how-to-generate-an-access-token-video/artifactory-creating-access-tokens-in-artifactory) for authentication
-* **COMMON_JPD**: This flag should be set as true only for non-kubernetes installations or installations where JPD base URL is same to access both Artifactory and Xray (ex: https://sample_base_url/artifactory or https://sample_base_url/xray)
+* **`JF_PRODUCT_DATA_INTERNAL`**: Should be set to the location where the relevant log folder exists. For each JFrog service you will find its active log files in the `$JFROG_HOME/<product>/var/log` directory so the environmnt variable should be set to `$JFROG_HOME/<product>/var`
+* **`NEWRELIC_LICENSE_KEY`**: License Key from [NewRelic](https://one.newrelic.com/launcher/api-keys-ui.api-keys-launcher)
+* **`JPD_URL`**: Artifactory JPD URL of the format `http://<ip_address>`
+* **`JPD_ADMIN_USERNAME`**: Artifactory username for authentication
+* **`JPD_ADMIN_TOKEN`**: Artifactory [Access Token](https://jfrog.com/help/r/how-to-generate-an-access-token-video/artifactory-creating-access-tokens-in-artifactory) for authentication
+* **`COMMON_JPD`**: This flag should be set as true only for non-kubernetes installations or installations where JPD base URL is same to access both Artifactory and Xray (e.g. https://sample_base_url/artifactory or https://sample_base_url/xray)
 
 Apply the .env files and then run fluentd with the config option specifying the path to the config file you downloaded above.
 
