@@ -52,25 +52,19 @@ Ensure you have access to the Internet from VM. Recommended install is through f
 | Gem Install**	 | MacOS & Linux - Gem    | https://docs.fluentd.org/installation/install-by-gem | 
 
 
-```text
-** For Gem based install, Ruby Interpreter has to be setup first, following is the recommended process to install Ruby
+> [!NOTE]
+> For Gem based installs, the Ruby Interpreter has to be setup first. The recommended process to install Ruby is as follows:
+> 1. Install Ruby Version Manager (RVM) as described in https://rvm.io/rvm/install#installation-explained, ensure to follow all the onscreen instructions provided to complete the rvm installation
+>	* For installation across users a SUDO based install is recommended, the installation is as described in https://rvm.io/support/troubleshooting#sudo
+> 2. Once rvm installation is complete, verify the RVM installation executing the command `rvm -v`
+> 3. Now install ruby v2.7.0 or above executing the command 'rvm install <ver_num>', e.g. 'rvm install 2.7.5'
+> 4. Verify the ruby installation, execute `ruby -v`, gem installation `gem -v` and `bundler -v` to ensure all the components are intact
+> 5. Post completion of Ruby, Gems installation, the environment is ready to further install new gems, execute the following gem install commands one after other to setup the needed ecosystem
+>    - `gem install fluentd`
 
-1. Install Ruby Version Manager (RVM) as described in https://rvm.io/rvm/install#installation-explained, ensure to follow all the onscreen instructions provided to complete the rvm installation
-	* For installation across users a SUDO based install is recommended, the installation is as described in https://rvm.io/support/troubleshooting#sudo
 
-2. Once rvm installation is complete, verify the RVM installation executing the command 'rvm -v'
 
-3. Now install ruby v2.7.0 or above executing the command 'rvm install <ver_num>', ex: 'rvm install 2.7.5'
-
-4. Verify the ruby installation, execute 'ruby -v', gem installation 'gem -v' and 'bundler -v' to ensure all the components are intact
-
-5. Post completion of Ruby, Gems installation, the environment is ready to further install new gems, execute the following gem install commands one after other to setup the needed ecosystem
-
-	'gem install fluentd'
-
-```
-
-After FluentD is successfully installed, the below plugins are required to be installed
+After FluentD is successfully installed, the following plugins need to be installed:
 
 ```shell
 gem install fluent-plugin-concat
@@ -81,24 +75,27 @@ gem install fluent-plugin-jfrog-send-metrics
 ```
 
 #### Configure Fluentd
-We rely heavily on environment variables so that the correct log files are streamed to your observability dashboards. Ensure that you fill in the .env file with correct values. Download the jfrog.env file from [here](https://raw.githubusercontent.com/jfrog/log-analytics-newrelic/master/jfrog.env)
+Download the relevant fluent configuration file for the product from the GitHub repository (e.g. for Artifactory download [fluent.conf.rt](https://github.com/jfrog/log-analytics-newrelic/blob/main/fluent.conf.rt)).
 
-* **JF_PRODUCT_DATA_INTERNAL**: The environment variable JF_PRODUCT_DATA_INTERNAL must be defined to the correct location. For each JFrog service you will find its active log files in the `$JFROG_HOME/<product>/var/log` directory
+The fluent configuration file uses environment variables extensively (e.g. to know where to collect log files to stream to your observability dashboards). Ensure that you fill in the .env file with correct values. Download the [jfrog.env file](https://raw.githubusercontent.com/jfrog/log-analytics-newrelic/master/jfrog.env)
+
+* **JF_PRODUCT_DATA_INTERNAL**: The environment variable JF_PRODUCT_DATA_INTERNAL must be set to the location where the log folder exists. For each JFrog service you will find its active log files in the `$JFROG_HOME/<product>/var/log` directory so the environmnt variable should be set to `$JFROG_HOME/<product>/var`
 * **NEWRELIC_LICENSE_KEY**: License Key from [NewRelic](https://one.newrelic.com/launcher/api-keys-ui.api-keys-launcher)
 * **JPD_URL**: Artifactory JPD URL of the format `http://<ip_address>`
 * **JPD_ADMIN_USERNAME**: Artifactory username for authentication
 * **JPD_ADMIN_TOKEN**: Artifactory [Access Token](https://jfrog.com/help/r/how-to-generate-an-access-token-video/artifactory-creating-access-tokens-in-artifactory) for authentication
 * **COMMON_JPD**: This flag should be set as true only for non-kubernetes installations or installations where JPD base URL is same to access both Artifactory and Xray (ex: https://sample_base_url/artifactory or https://sample_base_url/xray)
 
-Apply the .env files and then run the fluentd wrapper with one argument pointed to the `fluent.conf.*` file configured.
+Apply the .env files and then run fluentd with the config option specifying the path to the config file you downloaded above.
 
 ````shell
 source jfrog.env
-./fluentd $JF_PRODUCT_DATA_INTERNAL/fluent.conf.<product_name>
+fluentd -c <path to config file>/fluent.conf.<product_name>
 ````
 
 ### Docker
-`Note! These steps were not tested to work out of the box on MAC`
+> [!NOTE]
+> These steps were not tested to work out of the box on MAC
 In order to run fluentd as a docker image to send the log, siem and metrics data to Newrelic, the following commands needs to be executed on the host that runs the docker.
 
 1. Check the docker installation is functional, execute command 'docker version' and 'docker ps'.
